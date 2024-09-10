@@ -1,0 +1,14 @@
+{
+  "title": "新規登録",
+  "email": "メールアドレス",
+  "emailPlaceholder": "tatoeba@domain.jp",
+  "emailFormatError": "メール形式が不適切です。",
+  "emailAlreadyExistsError": "このメールは既に登録済みです。",
+  "password": "パスワード",
+  "passwordError": "最低7文字ご入力ください。",
+  "confirmPassword": "パスワード再確認",
+  "confirmPasswordError": "パスワードと不一致しています。",
+  "requiredFieldError": "入力必須項目。",
+  "register": "登録",
+  "backToLogin": "アカウントをお持ちの方はこちら"
+}

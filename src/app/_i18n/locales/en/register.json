@@ -1,0 +1,14 @@
+{
+  "title": "Create a new account",
+  "email": "E-mail",
+  "emailPlaceholder": "example@domain.com",
+  "emailFormatError": "Invalid email format.",
+  "emailAlreadyExistsError": "Account already registered.",
+  "password": "Password",
+  "passwordError": "Must be at least 7 characters.",
+  "confirmPassword": "Confirm Password",
+  "confirmPasswordError": "Unmatching passwords.",
+  "requiredFieldError": "Required field.",
+  "register": "Register",
+  "backToLogin": "Already have an account? Login"
+}

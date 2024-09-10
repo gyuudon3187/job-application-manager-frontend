@@ -1,0 +1,14 @@
+{
+  "title": "Skapa ett nytt konto",
+  "email": "E-post",
+  "emailPlaceholder": "exempel@domän.se",
+  "emailFormatError": "Ogiltigt mejlformat.",
+  "emailAlreadyExistsError": "Kontot existerar redan.",
+  "password": "Lösenord",
+  "passwordError": "Måste innehålla minst 7 tecken.",
+  "confirmPassword": "Bekräfta lösenord",
+  "confirmPasswordError": "Lösenorden överensstämmer ej.",
+  "requiredFieldError": "Måste ifyllas.",
+  "register": "Skapa konto",
+  "backToLogin": "Har du redan ett konto? Logga in"
+}
