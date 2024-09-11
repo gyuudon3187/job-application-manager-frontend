@@ -263,7 +263,12 @@ export default function Registration({
             i18nKey="backToLogin"
             t={t}
             components={{
-              0: <Link href="/login" className="text-pink-300" />,
+              0: (
+                <Link
+                  href="/login"
+                  className="text-pink-300 hover:text-pink-500"
+                />
+              ),
               1: <p className="text-xs dark:text-white" />,
             }}
           />
