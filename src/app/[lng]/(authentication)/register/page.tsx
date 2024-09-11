@@ -17,6 +17,7 @@ import {
 import { BASE_URL, METHOD } from "@/utils/api";
 import HttpStatus from "http-status-codes";
 import Link from "next/link";
+import { Trans } from "react-i18next";
 
 enum EmailSubmitErrorKeys {
   AlreadyRegistered = "emailAlreadyExistsError",
@@ -257,10 +258,15 @@ export default function Registration({
           error={confirmPasswordError}
         />
         <div className="flex flex-col items-center">
-          <Button text={t("register")} onSubmit={onSubmit} />
-          <Link href="/">
-            <p className="text-xs dark:text-white">{t("backToLogin")}</p>
-          </Link>
+          <Button onClick={onSubmit}>{t("register")}</Button>
+          <Trans
+            i18nKey="backToLogin"
+            t={t}
+            components={{
+              0: <Link href="/login" className="text-pink-300" />,
+              1: <p className="text-xs dark:text-white" />,
+            }}
+          />
         </div>
       </div>
     </div>

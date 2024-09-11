@@ -10,5 +10,5 @@
   "confirmPasswordError": "パスワードと不一致しています。",
   "requiredFieldError": "入力必須項目。",
   "register": "登録",
-  "backToLogin": "アカウントをお持ちの方はこちら"
+  "backToLogin": "<1>アカウントをお持ちの方は<0>こちら</0></1>"
 }

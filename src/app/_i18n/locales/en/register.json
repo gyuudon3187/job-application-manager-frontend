@@ -10,5 +10,5 @@
   "confirmPasswordError": "Unmatching passwords.",
   "requiredFieldError": "Required field.",
   "register": "Register",
-  "backToLogin": "Already have an account? Login"
+  "backToLogin": "<1>Already have an account? <0>Login</0></1>"
 }

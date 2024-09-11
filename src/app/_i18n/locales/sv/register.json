@@ -10,5 +10,5 @@
   "confirmPasswordError": "Lösenorden överensstämmer ej.",
   "requiredFieldError": "Måste ifyllas.",
   "register": "Skapa konto",
-  "backToLogin": "Har du redan ett konto? Logga in"
+  "backToLogin": "<1>Har du redan ett konto? <0>Logga in</0></1>"
 }
