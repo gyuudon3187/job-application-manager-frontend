@@ -98,12 +98,12 @@ export default function Registration({
       return;
     }
 
-    const response = await fetch(BASE_URL + "/register", {
+    const response = await fetch(BASE_URL + "/signup/", {
       method: METHOD.POST,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ username: "dummy", email, password }),
     });
 
     if (!response.ok) {
