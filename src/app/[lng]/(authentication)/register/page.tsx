@@ -4,9 +4,9 @@ import { useTranslation } from "@/app/_i18n/client";
 import {
   emailConstraint,
   passwordConstraint,
-} from "../_components/input/constraints";
-import Input from "../_components/input/Input";
-import Button from "../_components/Button";
+} from "../../_components/input/constraints";
+import Input from "../../_components/input/Input";
+import Button from "../../_components/Button";
 import {
   ChangeEvent,
   Dispatch,
