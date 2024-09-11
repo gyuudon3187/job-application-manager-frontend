@@ -12,6 +12,7 @@ import {
   Dispatch,
   SetStateAction,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { BASE_URL, METHOD } from "@/utils/api";
@@ -46,6 +47,24 @@ export default function Registration({
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+
+  const formIsValid = useMemo(
+    () =>
+      !!email &&
+      !!password &&
+      !!confirmPassword &&
+      !emailError &&
+      !passwordError &&
+      !confirmPasswordError,
+    [
+      email,
+      password,
+      confirmPassword,
+      emailError,
+      passwordError,
+      confirmPasswordError,
+    ],
+  );
 
   const onEmailChange = getOnChange(setEmail);
   const onPasswordChange = getOnChange(setPassword);
@@ -89,16 +108,7 @@ export default function Registration({
       setConfirmPasswordError(t(ConfirmPasswordSubmitErrorKeys.RequiredField));
     }
 
-    if (
-      !email ||
-      !password ||
-      !confirmPassword ||
-      emailError ||
-      passwordError ||
-      confirmPasswordError
-    ) {
-      return;
-    }
+    if (!formIsValid) return;
 
     const response = await fetch(BASE_URL + "/signup/", {
       method: METHOD.POST,
@@ -258,7 +268,9 @@ export default function Registration({
           error={confirmPasswordError}
         />
         <div className="flex flex-col items-center">
-          <Button onClick={onSubmit}>{t("register")}</Button>
+          <Button onClick={onSubmit} disabled={!formIsValid}>
+            {t("register")}
+          </Button>
           <Trans
             i18nKey="backToLogin"
             t={t}
