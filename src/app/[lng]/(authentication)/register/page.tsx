@@ -15,6 +15,7 @@ import {
   useState,
 } from "react";
 import { BASE_URL, METHOD } from "@/utils/api";
+import HttpStatus from "http-status-codes";
 import Link from "next/link";
 
 enum EmailSubmitErrorKeys {
@@ -111,7 +112,7 @@ export default function Registration({
       const errorCode = error.code;
 
       switch (response.status) {
-        case 409:
+        case HttpStatus.CONFLICT:
           if (errorCode === "USER_ALREADY_REGISTERED") {
             setEmailError(t(EmailSubmitErrorKeys.AlreadyRegistered));
           }
