@@ -1,4 +1,4 @@
-import { ChangeEvent, FocusEventHandler, useEffect, useMemo } from "react";
+import { ChangeEvent, FocusEventHandler, useMemo } from "react";
 
 export default function Input({
   label,
@@ -18,8 +18,6 @@ export default function Input({
   error?: string;
 }>) {
   const isValid = useMemo(() => !error, [error]);
-
-  useEffect(() => console.log(label + ": " + isValid), [isValid]);
 
   interface Style {
     common: string;
