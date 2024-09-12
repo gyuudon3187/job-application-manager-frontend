@@ -268,7 +268,7 @@ export default function Registration({
           error={confirmPasswordError}
         />
         <div className="flex flex-col items-center">
-          <Button onClick={onSubmit} disabled={!formIsValid}>
+          <Button onClick={onSubmit} disabled={!formIsValid} lng={lng}>
             {t("register")}
           </Button>
           <Trans
