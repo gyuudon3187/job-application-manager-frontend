@@ -10,5 +10,8 @@
   "confirmPasswordError": "Unmatching passwords.",
   "requiredFieldError": "Required field.",
   "register": "Register",
-  "backToLogin": "<1>Already have an account? <0>Login</0></1>"
+  "backToLogin": "<1>Already have an account? <0>Login</0></1>",
+  "registrationComplete": "Signup Complete!",
+  "informAboutLogin": "You can now log into the website through the <0>login page</0>",
+  "redirectToLogin": "Redirecting in {{seconds}} seconds..."
 }

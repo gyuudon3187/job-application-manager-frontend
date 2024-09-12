@@ -19,6 +19,7 @@ import { BASE_URL, METHOD } from "@/utils/api";
 import HttpStatus from "http-status-codes";
 import Link from "next/link";
 import { Trans } from "react-i18next";
+import RegistrationSuccessModal from "./_components/RegistrationSuccessModal";
 
 enum EmailSubmitErrorKeys {
   AlreadyRegistered = "emailAlreadyExistsError",
@@ -40,6 +41,8 @@ export default function Registration({
     lng: string;
   };
 }>) {
+  const [showModal, setShowModal] = useState(false);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -134,6 +137,7 @@ export default function Registration({
     } else {
       const data = await response.json();
       console.log("Server response:", data);
+      setShowModal(true);
     }
   }
 
@@ -241,6 +245,7 @@ export default function Registration({
 
   return (
     <div className="flex h-[calc(100vh-128px)] w-full justify-center items-center">
+      <RegistrationSuccessModal show={showModal} t={t} />
       <div className="flex flex-col w-1/6 items-center">
         <h1 className="dark:text-white text-lg font-bold text-center py-5">
           {t("title")}

@@ -10,5 +10,8 @@
   "confirmPasswordError": "パスワードと不一致しています。",
   "requiredFieldError": "入力必須項目。",
   "register": "登録",
-  "backToLogin": "<1>アカウントをお持ちの方は<0>こちら</0></1>"
+  "backToLogin": "<1>アカウントをお持ちの方は<0>こちら</0></1>",
+  "registrationComplete": "登録完了！",
+  "informAboutLogin": "<0>ログインページ</0>のほうでログインしてください。",
+  "redirectToLogin": "{{seconds}}秒後に切り替わります。"
 }
