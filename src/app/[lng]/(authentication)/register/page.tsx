@@ -20,6 +20,7 @@ import { BASE_URL, METHOD } from "@/utils/api";
 import Link from "next/link";
 import { Trans } from "react-i18next";
 import RegistrationSuccessModal from "./_components/RegistrationSuccessModal";
+import { withoutAuth } from "../../_components/withAuth";
 
 enum ErrorKeys {
   EmailAlreadyRegistered = "emailAlreadyExistsError",
@@ -208,4 +209,4 @@ function Registration({ params: { lng } }: { params: { lng: string } }) {
   );
 }
 
-export default Registration;
+export default withoutAuth(Registration);
