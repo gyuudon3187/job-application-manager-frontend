@@ -4,6 +4,7 @@ import { dir } from "i18next";
 import { languageCodes } from "../_i18n/settings";
 import { useTranslation } from "../_i18n";
 import ThemeProvider from "@/utils/ThemeProvider";
+import ReactQueryProvider from "@/utils/providers/ReactQueryProvider";
 import "./globals.css";
 import Header from "./_components/header/Header";
 
@@ -35,15 +36,18 @@ export default async function RootLayout({
   params: { lng: string };
 }>) {
   const { t } = await useTranslation(lng, "header");
+
   return (
     <html lang={lng} dir={dir(lng)}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-gray-500 px-4 py-16`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <Header title={t("title")} />
-          <main>{children}</main>
-        </ThemeProvider>
+        <ReactQueryProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <Header title={t("title")} />
+            <main>{children}</main>
+          </ThemeProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
