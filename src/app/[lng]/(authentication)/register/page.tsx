@@ -69,43 +69,7 @@ export default function Registration({
     ],
   );
 
-  const onEmailChange = getOnChange(setEmail);
-  const onPasswordChange = getOnChange(setPassword);
-  const onConfirmPasswordChange = getOnChange(setConfirmPassword);
-
-  const isEmailSubmitError = getIsSubmitError(EmailSubmitErrorKeys, emailError);
-  const isPasswordSubmitError = getIsSubmitError(
-    PasswordSubmitErrorKeys,
-    passwordError,
-  );
-  const isConfirmPasswordSubmitError = getIsSubmitError(
-    ConfirmPasswordSubmitErrorKeys,
-    confirmPasswordError,
-  );
-
-  const resetEmailSubmitErrorOnFocus = getResetSubmitErrorOnFocus(
-    isEmailSubmitError,
-    setEmailError,
-  );
-  const resetPasswordSubmitErrorOnFocus = getResetSubmitErrorOnFocus(
-    isPasswordSubmitError,
-    setPasswordError,
-  );
-  const resetConfirmPasswordSubmitErrorOnFocus = getResetSubmitErrorOnFocus(
-    isConfirmPasswordSubmitError,
-    setConfirmPasswordError,
-  );
-
-  const { t } = useTranslation(lng, "register");
-
-  async function onSubmit() {
-    if (!email) {
-      setEmailError(t(EmailSubmitErrorKeys.RequiredField));
-    }
-
-    if (!password) {
-      setPasswordError(t(PasswordSubmitErrorKeys.RequiredField));
-    }
+  const { t } = useTranslation(lng, "auth");
 
     if (!confirmPassword) {
       setConfirmPasswordError(t(ConfirmPasswordSubmitErrorKeys.RequiredField));
@@ -257,13 +221,6 @@ export default function Registration({
           onChange={onEmailChange}
           onFocus={resetEmailSubmitErrorOnFocus}
           error={emailError}
-        />
-        <Input
-          type="password"
-          label={t("password")}
-          onChange={onPasswordChange}
-          onFocus={resetPasswordSubmitErrorOnFocus}
-          error={passwordError}
         />
         <Input
           type="password"
