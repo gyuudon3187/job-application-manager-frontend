@@ -8,39 +8,45 @@ import {
 import Input from "../../_components/input/Input";
 import Button from "../../_components/Button";
 import {
+  useState,
+  useMemo,
+  useEffect,
   ChangeEvent,
   Dispatch,
   SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
 } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { BASE_URL, METHOD } from "@/utils/api";
-import HttpStatus from "http-status-codes";
 import Link from "next/link";
 import { Trans } from "react-i18next";
 import RegistrationSuccessModal from "./_components/RegistrationSuccessModal";
 
-enum EmailSubmitErrorKeys {
-  AlreadyRegistered = "emailAlreadyExistsError",
+enum ErrorKeys {
+  EmailAlreadyRegistered = "emailAlreadyExistsError",
+  EmailFormatInvalid = "emailFormatError",
   RequiredField = "requiredFieldError",
+  PasswordError = "passwordError",
+  ConfirmPasswordError = "confirmPasswordError",
 }
 
-enum PasswordSubmitErrorKeys {
-  RequiredField = "requiredFieldError",
+async function signup(email: string, password: string) {
+  const response = await fetch(BASE_URL + "/signup/", {
+    method: METHOD.POST,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  return response.json();
 }
 
-enum ConfirmPasswordSubmitErrorKeys {
-  RequiredField = "requiredFieldError",
-}
-
-export default function Registration({
-  params: { lng },
-}: Readonly<{
-  params: {
-    lng: string;
-  };
-}>) {
+function Registration({ params: { lng } }: { params: { lng: string } }) {
   const [showModal, setShowModal] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -71,183 +77,135 @@ export default function Registration({
 
   const { t } = useTranslation(lng, "auth");
 
-    if (!confirmPassword) {
-      setConfirmPasswordError(t(ConfirmPasswordSubmitErrorKeys.RequiredField));
-    }
-
-    if (!formIsValid) return;
-
-    const response = await fetch(BASE_URL + "/signup/", {
-      method: METHOD.POST,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: "dummy", email, password }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      const errorCode = error.code;
-
-      switch (response.status) {
-        case HttpStatus.CONFLICT:
-          if (errorCode === "USER_ALREADY_REGISTERED") {
-            setEmailError(t(EmailSubmitErrorKeys.AlreadyRegistered));
-          }
+  const mutation = useMutation({
+    mutationFn: () => signup(email, password),
+    onSuccess: () => {
+      setShowModal(true);
+    },
+    onError: (error: Error) => {
+      const errorCode = error.message;
+      switch (errorCode) {
+        case "USER_ALREADY_REGISTERED":
+          setEmailError(t(ErrorKeys.EmailAlreadyRegistered));
           break;
         default:
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          console.error(`Error: ${errorCode}`);
       }
-    } else {
-      const data = await response.json();
-      console.log("Server response:", data);
-      setShowModal(true);
+    },
+  });
+
+  function validateField(
+    value: string,
+    constraint: string,
+    errorKey: ErrorKeys,
+    setError: Dispatch<SetStateAction<string>>,
+  ) {
+    if (value) {
+      try {
+        const regex = new RegExp(constraint);
+        setError(regex.test(value) ? "" : t(errorKey));
+      } catch (e) {
+        console.error(`Invalid regex pattern: ${constraint}`);
+      }
     }
   }
 
-  function getOnChange(setState: Dispatch<SetStateAction<string>>) {
-    return (e: ChangeEvent<HTMLInputElement>) => {
-      setState(e.target.value);
-    };
-  }
-
-  function getIsSubmitError(SubmitErrorKeys: object, error: string) {
-    return () => {
-      return Object.values(SubmitErrorKeys).some(
-        (errorKey) => t(errorKey) === error,
-      );
-    };
-  }
-
-  function getResetSubmitErrorOnFocus(
-    isSubmitError: () => boolean,
-    setError: Dispatch<SetStateAction<string>>,
-  ) {
-    return () => {
-      if (isSubmitError()) setError("");
-    };
+  function validateConfirmPassword() {
+    setConfirmPasswordError(
+      confirmPassword === password ? "" : t(ErrorKeys.ConfirmPasswordError),
+    );
   }
 
   useEffect(() => {
-    interface ErrorInfo {
-      value: string;
-      error: string;
-      setError: Dispatch<SetStateAction<string>>;
-      constraint: string;
-      errorKey: string;
-    }
-
-    function setErrorBasedOnValidation(errorInfo: ErrorInfo) {
-      if (
-        isEmailSubmitError() ||
-        isPasswordSubmitError() ||
-        isConfirmPasswordSubmitError()
-      )
-        return;
-
-      function assertIsRegex(pattern: string): void {
-        try {
-          new RegExp(pattern);
-        } catch (e) {
-          throw new Error(`Invalid regex pattern: ${pattern}`);
-        }
-      }
-
-      if (errorInfo.value) {
-        try {
-          assertIsRegex(errorInfo.constraint);
-          const constraintRegex = new RegExp(errorInfo.constraint);
-          errorInfo.setError(
-            constraintRegex.test(errorInfo.value) ? "" : t(errorInfo.errorKey),
-          );
-        } catch (e) {
-          if (e instanceof Error) {
-            console.log(e.message);
-          } else {
-            throw new Error(
-              "An unknown error occurred while validating the regex pattern.",
-            );
-          }
-        }
-      }
-    }
-
-    function validateConfirmPassword() {
-      setConfirmPasswordError(
-        confirmPassword === password ? "" : t("confirmPasswordError"),
-      );
-    }
-
-    const errorInfoArr: ErrorInfo[] = [
-      {
-        value: email,
-        error: emailError,
-        setError: setEmailError,
-        constraint: emailConstraint,
-        errorKey: "emailFormatError",
-      },
-      {
-        value: password,
-        error: passwordError,
-        setError: setPasswordError,
-        constraint: passwordConstraint,
-        errorKey: "passwordError",
-      },
-    ];
-
-    errorInfoArr.forEach((info) => setErrorBasedOnValidation(info));
+    validateField(
+      email,
+      emailConstraint,
+      ErrorKeys.EmailFormatInvalid,
+      setEmailError,
+    );
+    validateField(
+      password,
+      passwordConstraint,
+      ErrorKeys.PasswordError,
+      setPasswordError,
+    );
     validateConfirmPassword();
-  }, [
-    email,
-    password,
-    confirmPassword,
-    emailError,
-    passwordError,
-    confirmPasswordError,
-    t,
-  ]);
+  }, [email, password, confirmPassword, t]);
+
+  const handleChange =
+    (setter: Dispatch<SetStateAction<string>>) =>
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setter(e.target.value);
+    };
+
+  const handleFocus =
+    (error: string, setter: Dispatch<SetStateAction<string>>) => () => {
+      if (error) setter("");
+    };
+
+  const onSubmit = () => {
+    if (!email) setEmailError(t(ErrorKeys.RequiredField));
+    if (!password) setPasswordError(t(ErrorKeys.RequiredField));
+    if (!confirmPassword) setConfirmPasswordError(t(ErrorKeys.RequiredField));
+
+    if (formIsValid) {
+      mutation.mutate();
+    }
+  };
 
   return (
-    <div className="flex h-[calc(100vh-128px)] w-full justify-center items-center">
+    <>
       <RegistrationSuccessModal show={showModal} t={t} />
-      <div className="flex flex-col w-1/6 items-center">
-        <h1 className="dark:text-white text-lg font-bold text-center py-5">
-          {t("title")}
-        </h1>
-        <Input
-          type="text"
-          label={t("email")}
-          placeholder={t("emailPlaceholder")}
-          onChange={onEmailChange}
-          onFocus={resetEmailSubmitErrorOnFocus}
-          error={emailError}
+      <h1 className="dark:text-white text-lg font-bold text-center py-5">
+        {t("registerTitle")}
+      </h1>
+      <Input
+        type="text"
+        label={t("email")}
+        placeholder={t("emailPlaceholder")}
+        onChange={handleChange(setEmail)}
+        onFocus={handleFocus(emailError, setEmailError)}
+        error={emailError}
+      />
+      <Input
+        type="password"
+        label={t("password")}
+        onChange={handleChange(setPassword)}
+        onFocus={handleFocus(passwordError, setPasswordError)}
+        error={passwordError}
+      />
+      <Input
+        type="password"
+        label={t("confirmPassword")}
+        onChange={handleChange(setConfirmPassword)}
+        onFocus={handleFocus(confirmPasswordError, setConfirmPasswordError)}
+        error={confirmPasswordError}
+      />
+      <div className="flex flex-col items-center">
+        <Button
+          onClick={onSubmit}
+          loading={mutation.isPending}
+          disabled={!formIsValid}
+          lng={lng}
+        >
+          {t("register")}
+        </Button>
+        <Trans
+          i18nKey="backToLogin"
+          t={t}
+          components={{
+            0: (
+              <Link
+                href={`/${lng}/login`}
+                className="text-pink-300 hover:text-pink-500"
+              />
+            ),
+            1: <p className="text-xs dark:text-white" />,
+          }}
         />
-        <Input
-          type="password"
-          label={t("confirmPassword")}
-          onChange={onConfirmPasswordChange}
-          onFocus={resetConfirmPasswordSubmitErrorOnFocus}
-          error={confirmPasswordError}
-        />
-        <div className="flex flex-col items-center">
-          <Button onClick={onSubmit} disabled={!formIsValid} lng={lng}>
-            {t("register")}
-          </Button>
-          <Trans
-            i18nKey="backToLogin"
-            t={t}
-            components={{
-              0: (
-                <Link
-                  href="/login"
-                  className="text-pink-300 hover:text-pink-500"
-                />
-              ),
-              1: <p className="text-xs dark:text-white" />,
-            }}
-          />
-        </div>
       </div>
-    </div>
+    </>
   );
 }
+
+export default Registration;

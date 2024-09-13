@@ -2,36 +2,27 @@ import { useTranslation } from "@/app/_i18n/client";
 import React, {
   ButtonHTMLAttributes,
   ReactNode,
-  useState,
   MouseEventHandler,
 } from "react";
+import Loading from "./Loading";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   disabled?: boolean;
+  loading?: boolean;
   lng?: string;
-  onClick: MouseEventHandler<HTMLButtonElement>; // Type onClick as MouseEventHandler<HTMLButtonElement>
+  onClick: MouseEventHandler<HTMLButtonElement>;
 }
 
 export default function Button({
   children,
   disabled,
+  loading,
   lng,
   onClick,
   ...rest
 }: ButtonProps) {
-  const [loading, setLoading] = useState(false);
   const { t } = useTranslation(lng, "data");
-
-  const handleClick: MouseEventHandler<HTMLButtonElement> = async (e) => {
-    setLoading(true); // Start loading when the fetch call begins
-
-    try {
-      await onClick(e); // Execute the provided onClick function (your fetch call)
-    } finally {
-      setLoading(false); // Stop loading when the fetch call resolves
-    }
-  };
 
   return (
     <button
@@ -40,7 +31,7 @@ export default function Button({
         focus:outline-none focus:ring-gray-100 hover:bg-gray-100 focus:ring-0
         ${disabled || loading ? "opacity-50 cursor-not-allowed hover:bg-white dark:opacity-50 dark:cursor-not-allowed dark:hover:bg-gray-800" : ""}
         ${loading ? "min-w-[150px] max-w-[200px]" : "min-w-[120px] max-w-[200px]"} transition-width`}
-      onClick={handleClick}
+      onClick={onClick}
       disabled={disabled || loading}
       {...rest}
     >
