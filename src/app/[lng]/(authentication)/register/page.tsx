@@ -162,6 +162,7 @@ function Registration({ params: { lng } }: { params: { lng: string } }) {
       </h1>
       <Input
         type="text"
+        id="email"
         label={t("email")}
         placeholder={t("emailPlaceholder")}
         onChange={handleChange(setEmail)}
@@ -170,6 +171,7 @@ function Registration({ params: { lng } }: { params: { lng: string } }) {
       />
       <Input
         type="password"
+        id="password"
         label={t("password")}
         onChange={handleChange(setPassword)}
         onFocus={handleFocus(passwordError, setPasswordError)}
@@ -177,6 +179,7 @@ function Registration({ params: { lng } }: { params: { lng: string } }) {
       />
       <Input
         type="password"
+        id="confirmPassword"
         label={t("confirmPassword")}
         onChange={handleChange(setConfirmPassword)}
         onFocus={handleFocus(confirmPasswordError, setConfirmPasswordError)}

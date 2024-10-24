@@ -2,6 +2,7 @@ import { ChangeEvent, FocusEventHandler, useMemo } from "react";
 
 export default function Input({
   label,
+  id,
   type,
   onChange,
   placeholder = "",
@@ -10,6 +11,7 @@ export default function Input({
   error = "",
 }: Readonly<{
   label: string;
+  id: string;
   type: "text" | "password";
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
@@ -46,10 +48,11 @@ export default function Input({
 
   return (
     <div className={className}>
-      <label htmlFor="error" className={applyStyle(labelStyle)}>
+      <label htmlFor={id} className={applyStyle(labelStyle)}>
         {label}
       </label>
       <input
+        id={id}
         onChange={onChange}
         onFocus={onFocus}
         type={type}
