@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, waitFor, screen } from "@testing-library/react";
 import ReactQueryProvider from "@/utils/providers/ReactQueryProvider";
 import { ReactNode, Suspense } from "react";
 import Loading from "../app/[lng]/_components/Loading";
@@ -11,11 +11,24 @@ function renderWithReactQueryProviderAndSuspense(component: ReactNode) {
   );
 }
 
-export function renderWithAuth(component: ReactNode) {
+function renderWithAuth(component: ReactNode) {
   document.cookie = "token=some-token";
+  renderWithReactQueryProviderAndSuspense(component);
+  document.cookie = "token=;";
+}
+
+function renderWithoutAuth(component: ReactNode) {
   renderWithReactQueryProviderAndSuspense(component);
 }
 
-export function renderWithoutAuth(component: ReactNode) {
-  renderWithReactQueryProviderAndSuspense(component);
+export async function renderWithLngAndMaybeAuthAndWaitForLoader(
+  component: ReactNode,
+  withAuth: boolean,
+) {
+  const renderer = withAuth ? renderWithAuth : renderWithoutAuth;
+  renderer(component);
+
+  await waitFor(() =>
+    expect(screen.queryByTestId("loading")).not.toBeInTheDocument(),
+  );
 }

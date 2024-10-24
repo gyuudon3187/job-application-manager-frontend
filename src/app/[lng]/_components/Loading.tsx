@@ -59,7 +59,7 @@ export default function Loading({
   // }
 
   return (
-    <div role="status">
+    <div role="status" data-testid="loading">
       <svg
         aria-hidden="true"
         className={`inline w-${size} h-${size} me-2 text-gray-200 animate-spin dark:text-gray-600 fill-${color}-600${color === Color.Gray ? " dark:fill-gray-300" : ""}`}
