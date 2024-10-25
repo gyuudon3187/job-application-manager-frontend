@@ -21,7 +21,7 @@ const handlers = [
     SignupSuccessResponseBody | SignupFailureResponseBody
   >(`${BASE_URL}/signup/`, async ({ request }) => {
     const { email, password } = await request.json();
-    if (email === "validUser" && password == "validPassword") {
+    if (email === "valid@email.com" && password == "validPassword") {
       return HttpResponse.json({ token: "some-token" });
     } else {
       return HttpResponse.json(
