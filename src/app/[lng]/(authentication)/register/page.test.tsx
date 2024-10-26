@@ -85,10 +85,6 @@ describe("Signup page", () => {
         return screen.getByText(/register/i);
       }
 
-      function buttonIsDisabled() {
-        expect(button()).toBeDisabled();
-      }
-
       async function fillConfirmPassword(input?: string) {
         await fillField(/confirm/i, input);
       }
@@ -117,18 +113,17 @@ describe("Signup page", () => {
       }
 
       it("renders", () => {
-        expect(screen.getByText(/register/i)).toBeInTheDocument();
+        expect(button()).toBeInTheDocument();
       });
 
       describe("is disabled", () => {
         afterEach(() => {
-          buttonIsDisabled();
+          expect(button()).toBeDisabled();
         });
 
         test("by default", () => {});
 
         test("when only a valid email is provided", async () => {
-          // await fillValidEmail();
           await fillForm({ email: validEmail });
         });
 
@@ -185,30 +180,30 @@ describe("Signup page", () => {
         expect(button()).toBeEnabled();
       });
 
-      async function submitForm(form: RegisterForm) {
-        await fillForm(form);
-        await userEvent.click(button());
-      }
+      describe("when enabled and clicked", () => {
+        async function submitValidForm() {
+          await fillForm({
+            email: validEmail,
+            password: validPassword,
+            confirmPassword: validPassword,
+          });
+          await userEvent.click(button());
+        }
 
-      async function submitValidForm() {
-        await submitForm({
-          email: validEmail,
-          password: validPassword,
-          confirmPassword: validPassword,
+        beforeEach(async () => {
+          await submitValidForm();
         });
-      }
 
-      it("shows signup complete message when enabled and clicked", async () => {
-        await submitValidForm();
-        await waitFor(() =>
-          expect(screen.getByText("Signup Complete!")).toBeInTheDocument(),
-        );
-      });
+        it("shows signup complete message", async () => {
+          await waitFor(() =>
+            expect(screen.getByText("Signup Complete!")).toBeInTheDocument(),
+          );
+        });
 
-      it("redirects user to root when enabled and clicked", async () => {
-        await submitValidForm();
-        expect(routerMock).toHaveBeenCalledTimes(1);
-        expect(routerMock).toHaveBeenCalledWith("/");
+        it("redirects user to root when enabled and clicked", async () => {
+          expect(routerMock).toHaveBeenCalledTimes(1);
+          expect(routerMock).toHaveBeenCalledWith("/");
+        });
       });
     });
   });
