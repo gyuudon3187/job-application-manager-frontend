@@ -1,11 +1,26 @@
 import { render, waitFor, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import ReactQueryProvider from "@/utils/providers/ReactQueryProvider";
 import { ReactNode, Suspense, FunctionComponent, createElement } from "react";
 import Loading from "../app/[lng]/_components/Loading";
 import _ from "lodash-contrib";
 
+export async function fillField(fieldName: RegExp | string, input?: string) {
+  if (input) {
+    await userEvent.type(screen.getByLabelText(fieldName), input);
+  }
+}
+
+export async function fillEmail(input?: string) {
+  await fillField(/mail/i, input);
+}
+
+export async function fillPassword(input?: string) {
+  await fillField("Password", input);
+}
+
 export function getRenderPage(
-  Page: FunctionComponent<{ params: { lng: string }; withAuth: boolean }>,
+  Page: FunctionComponent<{ params: { lng: string } }>,
 ) {
   function reactQueryProviderWrapper(component: ReactNode) {
     return <ReactQueryProvider>{component}</ReactQueryProvider>;
@@ -48,7 +63,7 @@ export function getRenderPage(
 
   async function renderPage(lng: string, withAuth: boolean) {
     await renderWithLngAndMaybeAuthAndWaitForLoader(
-      createElement(Page, { params: { lng }, withAuth }),
+      createElement(Page, { params: { lng } }),
       withAuth,
     );
   }

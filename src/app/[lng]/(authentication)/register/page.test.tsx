@@ -1,10 +1,14 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-// import { useRouter } from "next/navigation";
 import Registration from "./page";
 import { authServer } from "@/mocks/server";
-import { getRenderPage } from "@/utils/testutil";
+import {
+  fillField,
+  fillEmail,
+  fillPassword,
+  getRenderPage,
+} from "@/utils/testutil";
 
 const routerMock = jest.fn();
 jest.mock("next/navigation", () => ({
@@ -85,47 +89,24 @@ describe("Signup page", () => {
         expect(button()).toBeDisabled();
       }
 
-      async function fillField(fieldName: RegExp | string, input: string) {
-        await userEvent.type(screen.getByLabelText(fieldName), input);
-      }
-
-      async function fillEmail(input: string) {
-        await fillField(/mail/i, input);
-      }
-
-      async function fillPassword(input: string) {
-        await fillField("Password", input);
-      }
-
-      async function fillConfirmPassword(input: string) {
+      async function fillConfirmPassword(input?: string) {
         await fillField(/confirm/i, input);
       }
 
-      const validEmail = "valid@email.com";
-      async function fillValidEmail() {
-        await fillEmail("valid@email.com");
-      }
-
-      const validPassword = "validPassword";
-      async function fillSomePassword() {
-        await fillPassword(validPassword);
-      }
-
-      async function fillCorresondingConfirmPassword() {
-        await fillConfirmPassword(validPassword);
-      }
-
       interface RegisterForm {
-        email: string;
-        password: string;
-        confirmPassword: string;
+        email?: string;
+        password?: string;
+        confirmPassword?: string;
       }
 
       async function fillForm(form: RegisterForm) {
         await fillEmail(form.email);
-        await fillPassword(form.password);
-        await fillConfirmPassword(form.confirmPassword);
+        await fillPassword(form?.password);
+        await fillConfirmPassword(form?.confirmPassword);
       }
+
+      const validEmail = "valid@email.com";
+      const validPassword = "validPassword";
 
       async function fillValidForm() {
         await fillForm({
@@ -139,83 +120,65 @@ describe("Signup page", () => {
         expect(screen.getByText(/register/i)).toBeInTheDocument();
       });
 
-      it("is disabled by default", () => {
-        buttonIsDisabled();
-      });
-
-      type FillAndDisableTest = {
-        name: string;
-        fillFns: (() => Promise<void>)[];
-      }[];
-
-      const disabledAfterFillTests: FillAndDisableTest = [
-        {
-          name: "is disabled when only a valid email is provided",
-          fillFns: [fillValidEmail],
-        },
-        {
-          name: "is disabled when only password is provided",
-          fillFns: [fillSomePassword],
-        },
-        {
-          name: "is disabled when only confirm password is provided",
-          fillFns: [fillCorresondingConfirmPassword],
-        },
-        {
-          name: "is disabled when only a valid email and password are provided",
-          fillFns: [fillValidEmail, fillSomePassword],
-        },
-        {
-          name: "is disabled when only a valid email and confirm password are provided",
-          fillFns: [fillValidEmail, fillCorresondingConfirmPassword],
-        },
-        {
-          name: "is disabled when only a password and corresponding confirm password are provided",
-          fillFns: [fillSomePassword, fillCorresondingConfirmPassword],
-        },
-        {
-          name: "is disabled when a valid email is provided but the password (and confirm password) is too short",
-          fillFns: [
-            async () =>
-              await fillForm({
-                email: validEmail,
-                password: "2short",
-                confirmPassword: "2short",
-              }),
-          ],
-        },
-        {
-          name: "is disabled when a valid email and password are provided but with incorrect confirm password",
-          fillFns: [
-            async () =>
-              await fillForm({
-                email: validEmail,
-                password: validPassword,
-                confirmPassword: "somethingDifferent",
-              }),
-          ],
-        },
-        {
-          name: "is disabled when a password and corresponding confirm password are provided but with invalid email",
-          fillFns: [
-            async () =>
-              await fillForm({
-                email: "@email.com",
-                password: validPassword,
-                confirmPassword: validPassword,
-              }),
-          ],
-        },
-      ];
-
-      disabledAfterFillTests.forEach((test) =>
-        it(test.name, async () => {
-          for (const fn of test.fillFns) {
-            await fn();
-          }
+      describe("is disabled", () => {
+        afterEach(() => {
           buttonIsDisabled();
-        }),
-      );
+        });
+
+        test("by default", () => {});
+
+        test("when only a valid email is provided", async () => {
+          // await fillValidEmail();
+          await fillForm({ email: validEmail });
+        });
+
+        test("when only password is provided", async () => {
+          await fillForm({ password: validPassword });
+        });
+
+        test("when only confirm password is provided", async () => {
+          await fillForm({ confirmPassword: validPassword });
+        });
+
+        test("when only a valid email and password are provided", async () => {
+          await fillForm({ email: validEmail, password: validPassword });
+        });
+
+        test("when only a valid email and confirm password are provided", async () => {
+          await fillForm({ email: validEmail, confirmPassword: validPassword });
+        });
+
+        test("when only a password and corresponding confirm password are provided", async () => {
+          await fillForm({
+            password: validPassword,
+            confirmPassword: validPassword,
+          });
+        });
+
+        test("when a valid email is provided but the password (and confirm password) is too short", async () => {
+          await fillForm({
+            email: validEmail,
+            password: "2short",
+            confirmPassword: "2short",
+          });
+        });
+
+        test("when a valid email and password are provided but with incorrect confirm password", async () => {
+          await fillForm({
+            email: validEmail,
+            password: validPassword,
+            confirmPassword: "somethingDifferent",
+          });
+        });
+
+        test("when a password and corresponding confirm password are provided but with invalid email", async () => {
+          await fillForm({
+            email: "@email.com",
+            password: validPassword,
+            confirmPassword: validPassword,
+          });
+        });
+      });
 
       it("is enabled when all fields are filled with valid input", async () => {
         await fillValidForm();
