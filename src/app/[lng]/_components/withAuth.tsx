@@ -7,8 +7,11 @@ import { BASE_URL } from "@/utils/api";
 import Loading from "./Loading";
 
 async function fetchAuthStatus() {
+  const token = localStorage.getItem("token");
   const response = await fetch(BASE_URL + "/authorize/", {
-    credentials: "include",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {

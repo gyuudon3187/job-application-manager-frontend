@@ -40,9 +40,9 @@ export function getRenderPage(
   }
 
   function renderWithAuth(component: ReactNode) {
-    document.cookie = "token=some-token";
+    localStorage.setItem("token", "some-token");
     renderWithReactQueryProviderAndSuspense(component);
-    document.cookie = "token=;";
+    localStorage.removeItem("token");
   }
 
   function renderWithoutAuth(component: ReactNode) {

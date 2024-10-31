@@ -29,7 +29,6 @@ async function login(email: string, password: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
-    credentials: "include",
   });
 
   if (!response.ok) {
@@ -63,7 +62,8 @@ function Login({
 
   const mutation = useMutation({
     mutationFn: () => login(email, password),
-    onSuccess: () => {
+    onSuccess: ({ token }) => {
+      localStorage.setItem("token", token);
       router.push("/");
     },
     onError: (error: Error) => {
@@ -106,6 +106,7 @@ function Login({
       </h1>
       <Input
         type="text"
+        id="email"
         label={t("email")}
         placeholder={t("emailPlaceholder")}
         onChange={handleChange(setEmail)}
@@ -114,6 +115,7 @@ function Login({
       />
       <Input
         type="password"
+        id="password"
         label={t("password")}
         onChange={handleChange(setPassword)}
         onFocus={handleFocus(passwordError, setPasswordError)}
