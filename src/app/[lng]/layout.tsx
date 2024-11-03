@@ -3,10 +3,9 @@ import localFont from "next/font/local";
 import { dir } from "i18next";
 import { languageCodes } from "../_i18n/settings";
 import { useTranslation } from "../_i18n";
-import ThemeProvider from "@/utils/ThemeProvider";
-import ReactQueryProvider from "@/utils/providers/ReactQueryProvider";
 import "./globals.css";
 import Header from "./_components/header/Header";
+import Providers from "@/utils/providers/Providers";
 
 export async function generateStaticParams() {
   return languageCodes.map((lng) => ({ lng }));
@@ -42,12 +41,10 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-gray-500 px-4 py-16`}
       >
-        <ReactQueryProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <Header title={t("title")} />
-            <main>{children}</main>
-          </ThemeProvider>
-        </ReactQueryProvider>
+        <Providers lng={lng}>
+          <Header title={t("title")} />
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );

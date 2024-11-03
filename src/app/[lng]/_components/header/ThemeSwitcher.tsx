@@ -8,9 +8,11 @@ export default function ThemeSwitcher() {
   useEffect(() => {
     setMount(true);
   }, []);
-  console.log(currentTheme);
   return mount ? (
-    <div className="bg-white dark:bg-gray-700 rounded-md h-10 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+    <div
+      data-testid="theme-switcher"
+      className="bg-white dark:bg-gray-700 rounded-md h-10 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+    >
       <button
         onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
         type="button"
